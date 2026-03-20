@@ -27,7 +27,7 @@ export default async function OrderTracePage({ params }: { params: { id: string 
   }
 
   // Calculate dynamic delivery date (3 days from order creation)
-  const orderDate = new Date(order.createdAt);
+  const orderDate = new Date(order.createdAt || order.created_at || new Date());
   const deliveryDate = new Date(orderDate);
   deliveryDate.setDate(orderDate.getDate() + 3);
 
@@ -40,7 +40,7 @@ export default async function OrderTracePage({ params }: { params: { id: string 
         </div>
 
         <h1 className="text-3xl font-bold text-white mb-2 text-gradient">Order Tracing</h1>
-        <p className="text-gray-400 mb-8 font-mono text-sm">ID: {order._id}</p>
+        <p className="text-gray-400 mb-8 font-mono text-sm">ID: {order.id || order._id}</p>
 
         {/* Dynamic Trace Timeline Component */}
         <div className="bg-dark-800/50 rounded-2xl p-6 border border-white/10 mb-8">
@@ -92,14 +92,14 @@ export default async function OrderTracePage({ params }: { params: { id: string 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h3 className="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Shipping Information</h3>
-            <p className="text-gray-300">{order.shippingAddress.address}</p>
-            <p className="text-gray-300">{order.shippingAddress.city}, {order.shippingAddress.postalCode}</p>
-            <p className="text-gray-300">{order.shippingAddress.country}</p>
+            <p className="text-gray-300">{order.shippingAddress?.address || order.shipping_address?.address}</p>
+            <p className="text-gray-300">{order.shippingAddress?.city || order.shipping_address?.city}, {order.shippingAddress?.postalCode || order.shipping_address?.postalCode}</p>
+            <p className="text-gray-300">{order.shippingAddress?.country || order.shipping_address?.country}</p>
           </div>
           <div>
             <h3 className="text-lg font-bold text-white mb-4 border-b border-white/10 pb-2">Payment Details</h3>
-            <p className="text-gray-300 mb-1">Method: {order.paymentMethod}</p>
-            <p className="text-gray-300 font-bold text-lg text-primary-400">Total Charged: ${order.totalPrice.toFixed(2)}</p>
+            <p className="text-gray-300 mb-1">Method: {order.paymentMethod || order.payment_method}</p>
+            <p className="text-gray-300 font-bold text-lg text-primary-400">Total Charged: ${(order.totalPrice || order.total_price || 0).toFixed(2)}</p>
           </div>
         </div>
 

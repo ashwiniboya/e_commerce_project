@@ -1,30 +1,34 @@
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import users from './data/users.js';
 import products from './data/products.js';
-import User from './models/User.js';
-import Product from './models/Product.js';
-import Order from './models/Order.js';
-import connectDB from './config/db.js';
+import { supabase } from './config/db.js';
 
 dotenv.config();
-connectDB();
 
 const importData = async () => {
   try {
-    await Order.deleteMany();
-    await Product.deleteMany();
-    await User.deleteMany();
+    // Delete existing data (Cascade deletes may be needed depending on FK setup)
+    await supabase.from('orders').delete().neq('id', 0);
+    await supabase.from('products').delete().neq('id', 0);
+    await supabase.from('users').delete().neq('id', 0);
 
-    const createdUsers = await User.insertMany(users);
+    const { data: createdUsers, error: userError } = await supabase
+      .from('users')
+      .insert(users)
+      .select();
 
-    const adminUser = createdUsers[0]._id;
+    if (userError) throw userError;
+
+    const adminUser = createdUsers[0].id;
 
     const sampleProducts = products.map((product) => {
-      return { ...product, user: adminUser };
+      // make sure that image array is stringified if column is jsonb or string[], depends on DB setup. 
+      return { ...product, user_id: adminUser };
     });
 
-    await Product.insertMany(sampleProducts);
+    const { error: prodError } = await supabase.from('products').insert(sampleProducts);
+    
+    if (prodError) throw prodError;
 
     console.log('Data Imported!');
     process.exit();
@@ -36,9 +40,9 @@ const importData = async () => {
 
 const destroyData = async () => {
   try {
-    await Order.deleteMany();
-    await Product.deleteMany();
-    await User.deleteMany();
+    await supabase.from('orders').delete().neq('id', 0);
+    await supabase.from('products').delete().neq('id', 0);
+    await supabase.from('users').delete().neq('id', 0);
 
     console.log('Data Destroyed!');
     process.exit();

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import { supabase } from '../config/db.js';
 
 export const protect = async (req, res, next) => {
   let token;
@@ -13,7 +13,15 @@ export const protect = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
 
-      req.user = await User.findById(decoded.id).select('-password');
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('id, name, email, role')
+        .eq('id', decoded.id)
+        .single();
+        
+      if (error) throw error;
+
+      req.user = user;
 
       next();
     } catch (error) {
@@ -25,6 +33,7 @@ export const protect = async (req, res, next) => {
     res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
+
 
 export const admin = (req, res, next) => {
   if (req.user && req.user.role === 'Admin') {

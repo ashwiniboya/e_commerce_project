@@ -11,13 +11,13 @@ export default function ActionButtons({ product }: { product: any }) {
   const handleAddToCart = () => {
     // Basic LocalStorage Cart logic
     const existingCart = JSON.parse(localStorage.getItem('luxecart_items') || '[]');
-    const itemExists = existingCart.find((x: any) => x.product === product._id);
+    const itemExists = existingCart.find((x: any) => x.product === (product.id || product._id));
     
     if (itemExists) {
       itemExists.qty += 1;
     } else {
       existingCart.push({
-        product: product._id,
+        product: product.id || product._id,
         name: product.name,
         image: product.images[0],
         price: product.price,
@@ -42,7 +42,7 @@ export default function ActionButtons({ product }: { product: any }) {
             qty: 1,
             image: product.images[0],
             price: product.price,
-            product: product._id
+            product: product.id || product._id
           }],
           shippingAddress: { address: 'Express Lane 1', city: 'Fastville', postalCode: '00000', country: 'US' },
           paymentMethod: 'Credit Card',
@@ -56,7 +56,7 @@ export default function ActionButtons({ product }: { product: any }) {
       const data = await res.json();
       
       if (res.ok) {
-        router.push(`/order/${data._id}`);
+        router.push(`/order/${data.id || data._id}`);
       } else {
         alert('Failed to place order');
       }

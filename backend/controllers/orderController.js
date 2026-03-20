@@ -1,5 +1,4 @@
-import Order from '../models/Order.js';
-import User from '../models/User.js';
+import { supabase } from '../config/db.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -11,21 +10,33 @@ export const addOrderItems = async (req, res) => {
     res.status(400).json({ message: 'No order items' });
     return;
   } else {
-    // Grab a real object ID from db since Mongoose strictly validates hex ids
-    const dummyUser = await User.findOne();
-    const order = new Order({
-      user: dummyUser ? dummyUser._id : '000000000000000000000000', // valid hex
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      itemsPrice,
-      taxPrice,
-      shippingPrice,
-      totalPrice,
-    });
+    try {
+      // Grab a real user ID from db
+      const { data: dummyUser } = await supabase.from('users').select('id').limit(1).single();
 
-    const createdOrder = await order.save();
-    res.status(201).json(createdOrder);
+      const newOrder = {
+        user_id: dummyUser ? dummyUser.id : null,
+        order_items: orderItems, // stored as JSONB
+        shipping_address: shippingAddress, // stored as JSONB
+        payment_method: paymentMethod,
+        items_price: itemsPrice,
+        tax_price: taxPrice,
+        shipping_price: shippingPrice,
+        total_price: totalPrice,
+      };
+
+      const { data: createdOrder, error } = await supabase
+        .from('orders')
+        .insert([newOrder])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      res.status(201).json(createdOrder);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   }
 };
 
@@ -33,11 +44,22 @@ export const addOrderItems = async (req, res) => {
 // @route   GET /api/orders/:id
 // @access  Public
 export const getOrderById = async (req, res) => {
-  const order = await Order.findById(req.params.id);
+  try {
+    const { data: order, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
 
-  if (order) {
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+      throw error;
+    }
+
     res.json(order);
-  } else {
-    res.status(404).json({ message: 'Order not found' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

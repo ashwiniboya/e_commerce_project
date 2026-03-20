@@ -10,8 +10,7 @@ import orderRoutes from './routes/orderRoutes.js';
 // Load environment variables
 dotenv.config();
 
-// Connect to database
-connectDB();
+// Supabase client is initialized in config/db.js and used directly in controllers
 
 const app = express();
 
