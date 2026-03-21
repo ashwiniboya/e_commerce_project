@@ -30,7 +30,7 @@ export default async function ProductsPage() {
         <div className="text-gray-400">No products found. Please ensure the backend is running and database is seeded.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product: any) => (
+          {products?.map((product: any) => (
             <Link href={`/products/${product.id || product._id}`} key={product.id || product._id} className="group block">
               <div className="glass-panel rounded-2xl overflow-hidden transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-[0_20px_40px_-15px_rgba(20,184,166,0.3)]">
                 <div className="aspect-[4/3] bg-dark-800 flex items-center justify-center relative overflow-hidden group">
