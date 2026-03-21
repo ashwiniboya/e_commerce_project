@@ -1,4 +1,5 @@
 import Link from 'next/link';
+export const dynamic = "force-dynamic";
 
 // Helper to fetch data
 async function getProducts() {
