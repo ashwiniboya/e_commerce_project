@@ -4,7 +4,7 @@ import Link from 'next/link';
 // Helper to fetch server-side order
 async function getOrder(id: string) {
   try {
-    const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
+    const res = await fetch(`https://e-commerce-project-o0bq.onrender.com/api/orders/${id}`, {
       cache: 'no-store',
     });
     if (!res.ok) return null;
@@ -45,7 +45,7 @@ export default async function OrderTracePage({ params }: { params: { id: string 
         {/* Dynamic Trace Timeline Component */}
         <div className="bg-dark-800/50 rounded-2xl p-6 border border-white/10 mb-8">
           <h2 className="text-xl font-bold text-white mb-6">Delivery Status</h2>
-          
+
           <div className="flex items-center justify-between relative">
             <div className="absolute top-1/2 left-0 w-full h-1 bg-dark-700 -z-10 -translate-y-1/2 rounded-full" />
             <div className="absolute top-1/2 left-0 w-1/3 h-1 bg-primary-500 -z-10 -translate-y-1/2 rounded-full shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
