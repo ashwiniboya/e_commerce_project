@@ -6,7 +6,7 @@ async function getProducts() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://e-commerce-project-o0bq.onrender.com/api';
   try {
     const res = await fetch(`${apiUrl}/products`, {
-      cache: 'no-store', // Always fetch latest products
+      next: { revalidate: 0 }, // Changed from cache: 'no-store' to next: { revalidate: 0 } for Next.js 14+ best practices
     });
 
     if (!res.ok) {
@@ -36,7 +36,7 @@ export default async function ProductsPage() {
               <div className="glass-panel rounded-2xl overflow-hidden transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-[0_20px_40px_-15px_rgba(20,184,166,0.3)]">
                 <div className="aspect-[4/3] bg-dark-800 flex items-center justify-center relative overflow-hidden group">
                   <img
-                    src={product.images[0]}
+                    src={product.images?.[0] || product.image || 'https://via.placeholder.com/400x300?text=No+Image'}
                     alt={product.name}
                     className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                   />
@@ -50,8 +50,8 @@ export default async function ProductsPage() {
                   </h3>
 
                   <div className="flex items-center justify-between mt-4">
-                    <span className="text-xl font-bold text-white">${product.price.toFixed(2)}</span>
-                    <span className="text-sm text-gray-400">{product.rating} ★</span>
+                    <span className="text-xl font-bold text-white">${(product.price || 0).toFixed(2)}</span>
+                    <span className="text-sm text-gray-400">{product.rating || 0} ★</span>
                   </div>
                 </div>
               </div>

@@ -19,7 +19,7 @@ export default function ActionButtons({ product }: { product: any }) {
       existingCart.push({
         product: product.id || product._id,
         name: product.name,
-        image: product.images[0],
+        image: product.image || product.images?.[0] || '',
         price: product.price,
         qty: 1,
       });
@@ -33,14 +33,14 @@ export default function ActionButtons({ product }: { product: any }) {
     setLoading(true);
     try {
       // Create Database Order instantly
-      const res = await fetch('http://localhost:5000/api/orders', {
+      const res = await fetch('https://e-commerce-project-o0bq.onrender.com/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderItems: [{
             name: product.name,
             qty: 1,
-            image: product.images[0],
+            image: product.image || product.images?.[0] || '',
             price: product.price,
             product: product.id || product._id
           }],

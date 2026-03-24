@@ -5,10 +5,10 @@ import { ArrowLeft } from 'lucide-react';
 import ActionButtons from '@/components/ActionButtons';
 
 async function getProduct(id: string) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://e-commerce-project-o0bq.onrender.com/api';
   try {
     const res = await fetch(`${apiUrl}/products/${id}`, {
-      cache: 'no-store',
+      next: { revalidate: 0 },
     });
     
     if (!res.ok) {
@@ -67,11 +67,11 @@ export default async function ProductDetailsPage({ params }: { params: { id: str
           <div className="flex items-center gap-4 mb-6">
             <div className="flex items-center bg-white/5 rounded-full px-3 py-1 border border-white/10">
               <span className="text-yellow-400 mr-1">★</span>
-              <span className="text-white font-medium">{product.rating}</span>
-              <span className="text-gray-400 text-sm ml-2">({product.numReviews} reviews)</span>
+              <span className="text-white font-medium">{product.rating || 0}</span>
+              <span className="text-gray-400 text-sm ml-2">({product.numReviews || 0} reviews)</span>
             </div>
             
-            {product.stock > 0 ? (
+            {(product.stock || 0) > 0 ? (
               <span className="text-green-400 font-medium text-sm">In Stock</span>
             ) : (
               <span className="text-red-400 font-medium text-sm">Out of Stock</span>
@@ -79,12 +79,12 @@ export default async function ProductDetailsPage({ params }: { params: { id: str
           </div>
 
           <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-            {product.description}
+            {product.description || 'No description available for this product.'}
           </p>
 
           <div className="border-t border-white/10 pt-8 pb-6 mb-6">
             <div className="text-4xl font-bold text-white mb-2">
-              ${product.price.toFixed(2)}
+              ${(product.price || 0).toFixed(2)}
             </div>
             <p className="text-gray-400 text-sm">Includes taxes and shipping limits where applicable.</p>
           </div>
