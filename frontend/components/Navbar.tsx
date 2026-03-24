@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ShoppingCart, User, Search, Menu, X, LucideIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, User, Search, Menu, X, ShoppingBag as ShoppingBagIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {

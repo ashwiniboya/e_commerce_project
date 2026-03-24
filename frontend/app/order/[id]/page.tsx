@@ -31,17 +31,6 @@ export default async function OrderTracePage({ params }: { params: { id: string 
   const deliveryDate = new Date(orderDate);
   deliveryDate.setDate(orderDate.getDate() + 3);
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <div className="glass-panel rounded-3xl p-8 shadow-2xl overflow-hidden relative">
-        {/* Success Header Label */}
-        <div className="absolute top-0 right-0 bg-green-500/20 text-green-400 px-4 py-2 rounded-bl-3xl font-bold text-sm tracking-widest border-b border-l border-green-500/30 backdrop-blur-md">
-          ORDER SUCCESSFUL
-        </div>
-
-        <h1 className="text-3xl font-bold text-white mb-2 text-gradient">Order Tracing</h1>
-        <p className="text-gray-400 mb-8 font-mono text-sm">ID: {order.id || order._id}</p>
-
   const statusSteps = [
     { name: 'Placed', icon: CheckCircle, status: 'Placed' },
     { name: 'Processing', icon: Package, status: 'Processing' },
@@ -148,6 +137,7 @@ export default async function OrderTracePage({ params }: { params: { id: string 
         </div>
 
       </div>
+    </div>
     </div>
   );
 }
