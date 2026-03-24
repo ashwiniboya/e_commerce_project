@@ -42,51 +42,89 @@ export default async function OrderTracePage({ params }: { params: { id: string 
         <h1 className="text-3xl font-bold text-white mb-2 text-gradient">Order Tracing</h1>
         <p className="text-gray-400 mb-8 font-mono text-sm">ID: {order.id || order._id}</p>
 
-        {/* Dynamic Trace Timeline Component */}
-        <div className="bg-dark-800/50 rounded-2xl p-6 border border-white/10 mb-8">
-          <h2 className="text-xl font-bold text-white mb-6">Delivery Status</h2>
+  const statusSteps = [
+    { name: 'Placed', icon: CheckCircle, status: 'Placed' },
+    { name: 'Processing', icon: Package, status: 'Processing' },
+    { name: 'Shipped', icon: Truck, status: 'Shipped' },
+    { name: 'Out for Delivery', icon: Truck, status: 'Out for Delivery' },
+    { name: 'Delivered', icon: CheckCircle, status: 'Delivered' },
+  ];
 
-          <div className="flex items-center justify-between relative">
-            <div className="absolute top-1/2 left-0 w-full h-1 bg-dark-700 -z-10 -translate-y-1/2 rounded-full" />
-            <div className="absolute top-1/2 left-0 w-1/3 h-1 bg-primary-500 -z-10 -translate-y-1/2 rounded-full shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
+  const currentStatusIndex = statusSteps.findIndex(s => s.status === order.status) !== -1 
+    ? statusSteps.findIndex(s => s.status === order.status) 
+    : 0;
 
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center shadow-lg">
-                <CheckCircle className="w-5 h-5 text-white" />
-              </div>
-              <p className="text-xs font-bold text-white mt-3">Placed</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center shadow-lg">
-                <Package className="w-5 h-5 text-white" />
-              </div>
-              <p className="text-xs font-bold text-white mt-3">Packed</p>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-dark-700 border-2 border-primary-500 flex items-center justify-center animate-pulse">
-                <Truck className="w-5 h-5 text-primary-400" />
-              </div>
-              <p className="text-xs font-bold text-primary-400 mt-3">Dispatched</p>
-            </div>
-
-            <div className="flex flex-col items-center opacity-40">
-              <div className="w-10 h-10 rounded-full bg-dark-700 flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-gray-500" />
-              </div>
-              <p className="text-xs font-bold text-gray-400 mt-3">Delivered</p>
-            </div>
-          </div>
-
-          <div className="mt-8 bg-primary-500/10 border border-primary-500/20 rounded-xl p-4 flex items-center">
-            <Clock className="text-primary-400 w-8 h-8 mr-4" />
+  return (
+    <div className="min-h-screen bg-dark-950 pt-24 pb-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="glass-panel rounded-[3rem] p-10 shadow-2xl relative border border-white/5 overflow-hidden">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
             <div>
-              <p className="text-primary-400 font-bold mb-1">Expected Delivery</p>
-              <p className="text-white text-lg">Your items will arrive in <span className="text-primary-500 font-extrabold text-xl">3 Days</span> on {deliveryDate.toDateString()}</p>
+               <h1 className="text-4xl font-black text-white mb-2 tracking-tighter text-glow">
+                 Track your <span className="text-gradient">Order.</span>
+               </h1>
+               <p className="text-gray-500 font-mono text-xs uppercase tracking-widest bg-white/5 w-fit px-3 py-1 rounded-lg">
+                 Order ID: #{order.id || order._id}
+               </p>
+            </div>
+            <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-6 py-3 rounded-2xl flex items-center gap-3">
+              <CheckCircle size={20} className="animate-pulse" />
+              <div className="flex flex-col">
+                  <span className="text-[10px] uppercase font-bold tracking-widest">Status</span>
+                  <span className="text-sm font-black uppercase">{order.status || 'Confirmed'}</span>
+              </div>
             </div>
           </div>
-        </div>
+
+          {/* New Progress Bar UI */}
+          <div className="mb-16">
+            <div className="relative flex justify-between">
+              {/* Background Line */}
+              <div className="absolute top-6 left-0 w-full h-1 bg-white/5 -z-10 rounded-full" />
+              {/* Active Line */}
+              <div 
+                className="absolute top-6 left-0 h-1 bg-gradient-to-r from-primary-600 to-indigo-600 -z-10 rounded-full transition-all duration-1000 shadow-[0_0_20px_rgba(20,184,166,0.5)]" 
+                style={{ width: `${(currentStatusIndex / (statusSteps.length - 1)) * 100}%` }}
+              />
+
+              {statusSteps.map((step, idx) => {
+                const Icon = step.icon;
+                const isCompleted = idx <= currentStatusIndex;
+                const isActive = idx === currentStatusIndex;
+
+                return (
+                  <div key={idx} className="flex flex-col items-center">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${
+                       isCompleted ? 'bg-primary-600 shadow-lg shadow-primary-500/20 text-white' : 'bg-dark-800 text-gray-600 border border-white/5'
+                    } ${isActive ? 'ring-4 ring-primary-500/30 scale-110' : ''}`}>
+                      <Icon size={20} className={isActive ? 'animate-bounce' : ''} />
+                    </div>
+                    <span className={`text-[10px] font-black uppercase tracking-tighter mt-4 transition-colors ${
+                      isCompleted ? 'text-white' : 'text-gray-600'
+                    }`}>
+                      {step.name}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Delivery Estimation Box */}
+          <div className="bg-primary-500/5 rounded-3xl p-8 border border-primary-500/10 mb-12 flex flex-col sm:flex-row items-center gap-8">
+            <div className="w-20 h-20 bg-primary-600/20 rounded-2xl flex items-center justify-center shrink-0">
+               <Truck className="text-primary-500 w-10 h-10" />
+            </div>
+            <div>
+               <h3 className="text-xl font-bold text-white mb-2">Ready for Express Delivery</h3>
+               <p className="text-gray-400 mb-4 leading-relaxed max-w-md">Our logistics partner has received your package. It's on track to arrive safely at your doorstep.</p>
+               <div className="flex items-center gap-3 text-sm font-bold text-primary-400 bg-primary-500/10 w-fit px-4 py-2 rounded-xl">
+                  <Clock size={16} />
+                  Arriving in 3-5 days
+               </div>
+            </div>
+          </div>
 
         {/* Order Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

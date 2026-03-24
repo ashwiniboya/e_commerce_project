@@ -39,57 +39,88 @@ export default async function ProductDetailsPage({ params }: { params: { id: str
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <Link href="/products" className="inline-flex items-center text-sm text-gray-400 hover:text-primary-500 mb-8 transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Results
-      </Link>
+    <div className="min-h-screen bg-dark-950 pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Link href="/products" className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-white mb-12 transition-colors group">
+          <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-2 transition-transform" />
+          Back to the Collection
+        </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-        {/* Left column - 3D Viewer */}
-        <div className="glass-panel rounded-3xl overflow-hidden p-2 relative group">
-          <div className="absolute top-4 right-4 z-10 bg-dark-900/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-medium text-gray-300 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
-            Interactive 3D View
-          </div>
-          <ThreeDModel />
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24">
+          {/* Left column - 3D Viewer / Hero Image */}
+          <div className="space-y-8">
+            <div className="glass-panel rounded-[3rem] overflow-hidden p-2 relative group border border-white/5 shadow-2xl">
+              <div className="absolute top-6 right-6 z-10 bg-dark-950/60 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-primary-400 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse shadow-[0_0_10px_rgba(20,184,166,1)]" />
+                Live 3D Preview
+              </div>
+              <div className="aspect-square bg-dark-900/50 rounded-[2.5rem] overflow-hidden">
+                 <ThreeDModel />
+              </div>
+            </div>
 
-        {/* Right column - Product Details */}
-        <div className="flex flex-col justify-center">
-          <div className="mb-2 text-primary-500 font-semibold tracking-wide uppercase text-sm">
-            {product.category}
+            {/* Sub images or features */}
+            <div className="grid grid-cols-3 gap-4">
+                {[1,2,3].map(i => (
+                    <div key={i} className="aspect-square glass-panel rounded-2xl border border-white/5 bg-dark-800 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
+                        <img src={product.image || 'https://via.placeholder.com/400'} className="w-full h-full object-cover rounded-2xl" />
+                    </div>
+                ))}
+            </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight">
-            {product.name}
-          </h1>
-          
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex items-center bg-white/5 rounded-full px-3 py-1 border border-white/10">
-              <span className="text-yellow-400 mr-1">★</span>
-              <span className="text-white font-medium">{product.rating || 0}</span>
-              <span className="text-gray-400 text-sm ml-2">({product.numReviews || 0} reviews)</span>
+
+          {/* Right column - Product Details */}
+          <div className="flex flex-col justify-center py-6">
+            <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 font-black uppercase tracking-widest text-[10px]">
+              {product.category || 'Premium Collection'}
             </div>
             
-            {(product.stock || 0) > 0 ? (
-              <span className="text-green-400 font-medium text-sm">In Stock</span>
-            ) : (
-              <span className="text-red-400 font-medium text-sm">Out of Stock</span>
-            )}
-          </div>
+            <h1 className="text-5xl sm:text-6xl font-black text-white mb-6 tracking-tighter text-glow leading-[1.05]">
+              {product.name}
+            </h1>
+            
+            <div className="flex items-center gap-6 mb-10">
+              <div className="flex items-center bg-white/5 rounded-2xl px-4 py-2 border border-white/10 backdrop-blur-sm">
+                <Star className="text-yellow-400 w-4 h-4 mr-2 fill-current" />
+                <span className="text-white font-black text-sm">{product.rating || '4.5'}</span>
+                <span className="text-gray-500 text-xs font-bold ml-3 border-l border-white/10 pl-3">({product.numReviews || '128'} reviews)</span>
+              </div>
+              
+              <div className="h-2 w-2 rounded-full bg-white/10" />
 
-          <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-            {product.description || 'No description available for this product.'}
-          </p>
-
-          <div className="border-t border-white/10 pt-8 pb-6 mb-6">
-            <div className="text-4xl font-bold text-white mb-2">
-              ${(product.price || 0).toFixed(2)}
+              <div className="text-xs font-black uppercase tracking-widest">
+                {(product.stock || 0) > 0 ? (
+                  <span className="text-green-400">In Stock</span>
+                ) : (
+                  <span className="text-red-400/60">Out of Stock</span>
+                )}
+              </div>
             </div>
-            <p className="text-gray-400 text-sm">Includes taxes and shipping limits where applicable.</p>
-          </div>
 
-          <ActionButtons product={product} />
+            <p className="text-gray-400 text-lg mb-12 leading-relaxed font-medium">
+              {product.description || 'This premium item defines luxury with its meticulous craftsmanship and innovative design details. Perfect for those who appreciate the finer things in life.'}
+            </p>
+
+            <div className="mb-12">
+              <div className="flex items-baseline gap-4 mb-2">
+                <span className="text-6xl font-black text-white leading-none">${(product.price || 0).toFixed(2)}</span>
+                <span className="text-gray-500 font-bold line-through text-xl">${((product.price || 0) * 1.2).toFixed(2)}</span>
+              </div>
+              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest pl-1">Worldwide shipping + Instant tracking</p>
+            </div>
+
+            <ActionButtons product={product} />
+
+            <div className="mt-12 pt-12 border-t border-white/5">
+                <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-center">Guaranteed by LuxeCart Global</p>
+                <div className="flex justify-center gap-8 opacity-30">
+                    {/* Placeholder for small icons/badges */}
+                    <div className="w-8 h-8 bg-white rounded-full" />
+                    <div className="w-8 h-8 bg-white rounded-full" />
+                    <div className="w-8 h-8 bg-white rounded-full" />
+                </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
