@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 const ThreeDModel = dynamic(() => import('@/components/ThreeDModel'), { ssr: false });
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 import ActionButtons from '@/components/ActionButtons';
 
 async function getProduct(id: string) {
