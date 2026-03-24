@@ -30,6 +30,8 @@ app.use('/api/orders', orderRoutes);
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+// Manual/Legacy routes for compatibility
 app.get("/products", async (req, res) => {
   const { data, error } = await supabase
     .from("products")
